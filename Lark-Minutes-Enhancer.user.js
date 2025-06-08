@@ -17,10 +17,22 @@
 // @updateURL    https://greasyfork.org/scripts/你的脚本ID/code/你的脚本名.meta.js  // Greasy Fork会自动生成，发布后可以填上
 // ==/UserScript==
 
+/**
+ * 飞书妙记增强脚本主函数
+ * 主要功能：
+ * 1. 移除飞书妙记的额度限制遮罩
+ * 2. 自动展开纪要内容
+ * 3. 提供一键复制为Markdown格式功能
+ */
 (function() {
     'use strict';
     // ... (v1.3的全部功能代码保持不变) ...
-    // --- [功能 F01 & F02] 移除遮罩 & 自动展开 ---
+    /**
+ * [功能 F01 & F02] 移除遮罩 & 自动展开
+ * 通过注入CSS样式实现：
+ * 1. 隐藏额度超限的遮罩层
+ * 2. 定义浮动复制按钮的样式
+ */
     GM_addStyle(`
         div.ai-quota-exceed-mask, div.linear-gradient-content { display: none !important; }
         #floating-copy-button {
@@ -35,7 +47,12 @@
         #floating-copy-button.error { background-color: #dc3545; }
     `);
 
-    function expandAllChapters() {
+    /**
+ * 自动展开所有章节内容
+ * 查找页面中的"展开"按钮并自动点击
+ * 如果按钮存在且未被点击过(data-expanded属性为false)，则触发点击事件
+ */
+function expandAllChapters() {
         const expandButton = document.querySelector('div.ai-summary-content-editable-expand-button-wrapper > button:not([data-expanded="true"])');
         if (expandButton && expandButton.textContent.includes('展开')) {
             expandButton.click();
@@ -44,8 +61,13 @@
         }
     }
 
-    // --- [新增功能] HTML到Markdown转换器 ---
-    function htmlToMarkdown(element) {
+    /**
+ * [新增功能] HTML到Markdown转换器
+ * 将HTML格式的纪要内容转换为Markdown格式
+ * @param {HTMLElement} element - 包含纪要内容的DOM元素
+ * @returns {string} 转换后的Markdown文本
+ */
+function htmlToMarkdown(element) {
         let markdownText = '';
 
         function processNode(node, listLevel = 0) {
